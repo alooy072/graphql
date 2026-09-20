@@ -1,30 +1,21 @@
-export const apiUrl = "https://learn.reboot01.com/api/graphql-engine/v1/graphql"
-export const authURL = "https://learn.reboot01.com/api/auth/signin"
+import { authenticate } from "./auth.js";
 
-const query = `
-query user{
-id
-}`
+let form = document.getElementById("login-form");
 
+ form.addEventListener('submit' , async (e) => {
+    e.preventDefault();
 
+    let identifier = form.querySelector('[name="identifier"]');
+    let password = form.querySelector('[name="password"]')
 
-const credentials = btoa(`${identifier}:${password}`);
-
-
-
-
-
-const resp = await fetch(authURL, {
-    method: "POST",
-    headers: {
-        'Authorization': `Basic ${credentials}`
+    const jwt = await authenticate(identifier.value, password.value)
+    
+    const errorDiv = document.getElementById("error-div")
+    if (jwt == "error") {
+        errorDiv.style.display = "block"
+        return
     }
-});
+    sessionStorage.setItem("jwt", jwt);
 
-const jwt = await resp.json();
-console.log(jwt)
-sessionStorage.setItem("jwt", jwt);
-
-window.location.href = "../templates/profile.html"
-
-console.log(jwt);
+    // window.location.href = "../templates/profile.html"
+})
