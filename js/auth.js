@@ -1,10 +1,10 @@
 export const apiUrl = "https://learn.reboot01.com/api/graphql-engine/v1/graphql"
 export const authURL = "https://learn.reboot01.com/api/auth/signin"
 
-const query = `
-    query user{
-        id
-    }`
+// const query = `
+//     query user{
+//         id
+//     }`
 
 export async function isAuthenticated(jwt) {
 
@@ -14,8 +14,11 @@ export async function isAuthenticated(jwt) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
         },
-        body: JSON.stringify({ query: query })
+        body: JSON.stringify({
+            query: `{ user { id } }`
+        })
     })
+
 
     const authData = await res.json()
 
@@ -36,6 +39,7 @@ export async function authenticate(identifier, password) {
     });
 
     if (!resp.ok) {
+        console.log("error authentication")
         return
     }
     const jwt = await resp.json();

@@ -1,10 +1,10 @@
-import { apiUrl } from "./login"
+import { apiUrl } from "./auth.js"
 
 
 export async function GraphqlQuery(query){ 
     const jwt = sessionStorage.getItem("jwt");
 
-    const resp = fetch(apiUrl, {
+    const resp = await fetch(apiUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -15,6 +15,6 @@ export async function GraphqlQuery(query){
         })
     })
 
-    const data = await resp.JSON();
+    const data = await resp.json();
     return data;
 }
