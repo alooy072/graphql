@@ -27,7 +27,7 @@ async function loadProfile() {
 
     let userObj = userInfo.data.user[0]
     console.log(userObj)
-    let userID =  userObj.id
+    let userID = userObj.id
     console.log(userID)
 
     let username = userObj.login
@@ -45,9 +45,16 @@ async function loadProfile() {
     });
 
     totalXp /= 1000;
-    
+
     console.log(Math.round(totalXp))
     
+    let auditRatioInfo = await getAuditRatio()
+    let auditRatioObj = auditRatioInfo.data.user[0]
+    let auditRatio = auditRatioObj.auditRatio
+    let auditDone = auditRatioObj.totalUp / 1000000             // Converts to MB
+    let auditRecieved = auditRatioObj.totalDown / 1000000       // Converts to MB
+    console.log(auditRatio , auditDone , auditRecieved)
+
 }
 
 async function getXP() {
@@ -70,8 +77,18 @@ async function getXP() {
     return xp
 }
 
-async function getAuditRatio(){
-    let auditRatioQuery = ``
+async function getAuditRatio() {
+    let auditRatioQuery = `{
+        user {
+        id
+        auditRatio
+        totalUp
+        totalDown
+        }
+    }`
+
+    let auditRatioInfo =  await GraphqlQuery(auditRatioQuery);
+    return auditRatioInfo
 }
 
 function redirectToLogin() {
