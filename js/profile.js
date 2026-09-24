@@ -1,6 +1,7 @@
 import { isAuthenticated } from "./auth.js";
 import { GraphqlQuery } from "./query.js";
 import {xpPerProject, xpOverTime} from "./graphs.js"
+import { getXP, getAuditRatio } from "./user-info.js";
 
 loadProfile()
 
@@ -36,6 +37,14 @@ async function loadProfile() {
 
     console.log("username:", username, " email:", email)
 
+    let usernameEl = document.getElementById("username");
+    let emailEl = document.getElementById("email");
+    let userIdEl = document.getElementById("user-id");
+
+    usernameEl.textContent = username;
+    emailEl.textContent = email;
+    userIdEl.textContent = userID;
+
     let xpInfo = await getXP()
     console.log(xpInfo)
 
@@ -48,6 +57,9 @@ async function loadProfile() {
     totalXp /= 1000;
 
     console.log(Math.round(totalXp))
+
+    let totalXpEl = document.getElementById("total-xp")
+    totalXpEl.textContent = totalXp
     
     let auditRatioInfo = await getAuditRatio()
     let auditRatioObj = auditRatioInfo.data.user[0]
@@ -56,48 +68,21 @@ async function loadProfile() {
     let auditRecieved = auditRatioObj.totalDown / 1000000       // Converts to MB
     console.log(auditRatio , auditDone , auditRecieved)
 
+    let auditRatioEl = document.getElementById("audit-ratio");
+    auditRatioEl.textContent = auditRatio.toFixed(2)
+
     let xpGraphData = await xpPerProject();
     let xpGraphArray = xpGraphData.data.transaction;
     console.log(xpGraphArray);
+
+    
 
     let xpOverTimeData = await xpOverTime();
     let xpOverTimeArray = xpOverTimeData.data.transaction
     console.log(xpOverTimeArray)
 }
 
-async function getXP() {
-    let xpQuery = `{
-    
-        transaction(
-            where: {
-                type: { _eq: "xp" },
-                path: {
-                    _regex: "^/bahrain/bh-module/([^/]+|checkpoint/[^/]+)$"
-                }
-            }
-        ) {
-            amount
-        }
-    }`
 
-    let xp = await GraphqlQuery(xpQuery);
-
-    return xp
-}
-
-async function getAuditRatio() {
-    let auditRatioQuery = `{
-        user {
-        id
-        auditRatio
-        totalUp
-        totalDown
-        }
-    }`
-
-    let auditRatioInfo =  await GraphqlQuery(auditRatioQuery);
-    return auditRatioInfo
-}
 
 
 function redirectToLogin() {

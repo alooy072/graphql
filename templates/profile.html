@@ -1,20 +1,45 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>GraphQL Login</title>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GraphQL Login</title>
+</head>
 
-    <body>
-        
+<body>
 
-        <div id="logout-div">
-            <button type="button">Logout</button>
+
+    <div id="logout-div">
+        <button type="button">Logout</button>
+    </div>
+
+    <main>
+        <div id="user-info">
+            <span id="username"></span>
+            <span id="user-id"></span>
+            <span id="email"></span>
         </div>
-    </body>
 
-    <script type="module" src="../js/profile.js"></script>
+        <div>
+            <span id="total-xp"></span>
+        </div>
+
+        <div>
+            <span id="audit-ratio"></span>
+        </div>
+
+        <div id="chart-container">
+            <!-- The SVG wrapper container -->
+            <svg id="bar-chart" width="500" height="300" style="border: 1px solid #ccc;">
+
+                <!-- Baseline axis floor at y=250 -->
+                <line x1="20" y1="250" x2="480" y2="250" stroke="#333" stroke-width="2" />
+            </svg>
+        </div>
+    </main>
+</body>
+
+<script type="module" src="../js/profile.js"></script>
 
 </html>
