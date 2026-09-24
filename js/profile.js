@@ -1,5 +1,6 @@
 import { isAuthenticated } from "./auth.js";
 import { GraphqlQuery } from "./query.js";
+import {xpPerProject, xpOverTime} from "./graphs.js"
 
 loadProfile()
 
@@ -55,6 +56,13 @@ async function loadProfile() {
     let auditRecieved = auditRatioObj.totalDown / 1000000       // Converts to MB
     console.log(auditRatio , auditDone , auditRecieved)
 
+    let xpGraphData = await xpPerProject();
+    let xpGraphArray = xpGraphData.data.transaction;
+    console.log(xpGraphArray);
+
+    let xpOverTimeData = await xpOverTime();
+    let xpOverTimeArray = xpOverTimeData.data.transaction
+    console.log(xpOverTimeArray)
 }
 
 async function getXP() {
@@ -90,6 +98,7 @@ async function getAuditRatio() {
     let auditRatioInfo =  await GraphqlQuery(auditRatioQuery);
     return auditRatioInfo
 }
+
 
 function redirectToLogin() {
     window.location.href = "../templates/index.html";
