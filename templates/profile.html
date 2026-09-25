@@ -4,15 +4,17 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GraphQL Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <title>GraphQL</title>
 </head>
 
 <body>
-
-
-    <div id="logout-div">
-        <button type="button">Logout</button>
-    </div>
+    <header id="topbar">
+        <span id="page-title">My Profile</span>
+        <div id="logout-div">
+            <button type="button">Logout</button>
+        </div>
+    </header>
 
     <main>
         <div id="user-info">
@@ -21,21 +23,29 @@
             <span id="email"></span>
         </div>
 
-        <div>
-            <span id="total-xp"></span>
+        <div class="stats-row">
+            <div class="stat-card" id="total-xp-card">
+                <span id="total-xp"></span>
+            </div>
+            <div class="stat-card" id="audit-ratio-card">
+                <span id="audit-ratio"></span>
+            </div>
         </div>
 
-        <div>
-            <span id="audit-ratio"></span>
-        </div>
+        <div class="charts-row">
+            <div id="chart-container">
+                <svg id="bar-chart" width="600" viewBox="0 0 600 400">
+                    <line x1="150" y1="10" x2="150" y2="10" stroke="#333" stroke-width="2" />
+                </svg>
+            </div>
 
-        <div id="chart-container">
-            <!-- The SVG wrapper container -->
-            <svg id="bar-chart" width="600" style="border: 1px solid #ccc;">
-                <line x1="150" y1="10" x2="150" y2="10" stroke="#333" stroke-width="2" />
-            </svg>
+            <div id="line-chart-container">
+                <svg id="line-chart" width="1050" height="450" viewBox="0 0 1050 450" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
         </div>
     </main>
+
+    <script type="module" src="../js/profile.js"></script>
 </body>
 
 <script type="module" src="../js/profile.js"></script>

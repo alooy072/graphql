@@ -40,5 +40,6 @@ export async function xpOverTime(){
     }`;
 
     let response = await GraphqlQuery(xpOverTimeQuery);
+
     return response;
 }

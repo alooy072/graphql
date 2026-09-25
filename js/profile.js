@@ -73,6 +73,9 @@ async function loadProfile() {
 
     let xpGraphData = await xpPerProject();
     let xpGraphArray = xpGraphData.data.transaction;
+    xpGraphArray.forEach(obj => {
+        obj.amount = obj.amount/1000
+    })
     console.log(xpGraphArray);
 
     xpGraphArray.sort((a, b) => b.amount - a.amount) // Sorts the array by least xp to most
@@ -80,7 +83,7 @@ async function loadProfile() {
     const svg = document.getElementById("bar-chart");
     const baselineX = 140;
     const maxBarWidth = 400
-    const barHeight = 25;
+    const barHeight = 20;
     const barSpacing = 10;
     const startY = 40;
 
@@ -117,9 +120,69 @@ async function loadProfile() {
 
     let xpOverTimeData = await xpOverTime();
     let xpOverTimeArray = xpOverTimeData.data.transaction
+    xpOverTimeArray.forEach(obj => {
+        obj.amount = obj.amount/1000
+    })
     console.log(xpOverTimeArray)
-}
 
+    let runningTotal = 0;
+    const cumulativePoints = xpOverTimeArray.map(tx => {
+        runningTotal += tx.amount;
+        return { date: new Date(tx.createdAt), total: runningTotal };
+    })
+    console.log(cumulativePoints)
+
+    const lineSvg = document.getElementById("line-chart");
+    const chartWidth = 1000;
+    const chartHeight = 400;
+    const marginLeft = 60;
+    const marginBottom = 40;
+    const marginTop = 20;
+
+    const maxTotal = cumulativePoints[cumulativePoints.length - 1].total;
+    const minDate = cumulativePoints[0].date.getTime()
+    const maxDate = cumulativePoints[cumulativePoints.length - 1].date.getTime();
+
+    // Maps a point to pixel coordinates
+    function toX(date) {
+        return marginLeft + ((date.getTime() - minDate) / (maxDate - minDate)) * (chartWidth - marginLeft - 20);
+    }
+
+    function toY(total) {
+        return (chartHeight - marginBottom) - (total / maxTotal) * (chartHeight - marginBottom - marginTop);
+    }
+
+    // Build the path data
+    let pathD = cumulativePoints
+        .map((p, i) => `${i === 0 ? "M" : "L"} ${toX(p.date).toFixed(1)},${toY(p.total).toFixed(1)}`)
+        .join(" ");
+
+    let lineContent = `
+    <!-- Axes -->
+    <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft}" y2="${chartHeight - marginBottom}" stroke="#333" stroke-width="2" />
+    <line x1="${marginLeft}" y1="${chartHeight - marginBottom}" x2="${chartWidth - 20}" y2="${chartHeight - marginBottom}" stroke="#333" stroke-width="2" />
+
+    <!-- Y axis max label -->
+    <text x="${marginLeft - 10}" y="${marginTop + 4}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${maxTotal}</text>
+    <text x="${marginLeft - 10}" y="${chartHeight - marginBottom}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">0</text>
+
+    <!-- The cumulative XP line -->
+    <path d="${pathD}" fill="none" stroke="#2b6cb0" stroke-width="2" />
+`;
+
+    // Add a dot at each transaction point
+    cumulativePoints.forEach(p => {
+        lineContent += `<circle cx="${toX(p.date).toFixed(1)}" cy="${toY(p.total).toFixed(1)}" r="3" fill="#2b6cb0" />`;
+    });
+
+    // Start and end date labels
+    lineContent += `
+    <text x="${marginLeft}" y="${chartHeight - marginBottom + 20}" font-size="12" font-family="sans-serif" fill="#666">${cumulativePoints[0].date.toLocaleDateString()}</text>
+    <text x="${chartWidth - 20}" y="${chartHeight - marginBottom + 20}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${cumulativePoints[cumulativePoints.length - 1].date.toLocaleDateString()}</text>
+`;
+
+    lineSvg.innerHTML += lineContent;
+}
 
 
 
