@@ -75,37 +75,41 @@ async function loadProfile() {
     let xpGraphArray = xpGraphData.data.transaction;
     console.log(xpGraphArray);
 
+    xpGraphArray.sort((a, b) => b.amount - a.amount) // Sorts the array by least xp to most
+
     const svg = document.getElementById("bar-chart");
-    const baselineY = 250;
-    const maxGraphHeight = 200
-    const barWidth = 50;
+    const baselineX = 140;
+    const maxBarWidth = 400
+    const barHeight = 25;
     const barSpacing = 10;
-    const startX = 40;
+    const startY = 40;
 
     const maxValue = Math.max(...xpGraphArray.map(obj => obj.amount))
-    let svgContent = ``
+
+    // Set svg height to fit all bars, stacked vertically
+    const totalHeight = startY + xpGraphArray.length * (barHeight + barSpacing) + 20;
+    svg.setAttribute("height", totalHeight)
+
+    let svgContent = `<line x1="${baselineX}" y1="10" x2="${baselineX}" y2="${totalHeight - 10}" stroke="#333" stroke-width="2" />`;
 
     xpGraphArray.forEach((obj, index) => {
-        // Calculate x position for each bar
-        const x = startX + index * (barWidth + barSpacing);
+        // Calculate y position for each bar (stacked top to bottom)
+        const y = startY + index * (barHeight + barSpacing);
 
         // Calculate vertical size using the scaling ratio
-        const pixelHeight = (obj.amount / maxValue) * maxGraphHeight;
-
-        // Flipped Y coordinate logic: baseline floor minus the bar's height
-        const y = baselineY - pixelHeight;
+        const pixelWidth = (obj.amount / maxValue) * maxBarWidth;
 
         const projectName = obj.path.split("/").pop() // pops the project name out of the path
 
         svgContent += `
             <!-- Dynamic Bar -->
-            <rect x="${x}" y="${y}" width="${barWidth}" height="${pixelHeight}" />
+            <rect x="${baselineX}" y="${y}" width="${pixelWidth}" height="${barHeight}" />
 
-            <!-- Value Text Label centered above the bar -->
-            <text x="${x + barWidth / 2}" y="${y-8}" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#666">${obj.amount}</text>
+            <!-- Value Text Label at the end of the bar -->
+            <text x="${baselineX + pixelWidth + 8}" y="${y + barHeight / 2}" font-size="12" font-family="sans-serif" fill="#666">${obj.amount}</text>
 
-            <!-- Axis Category Label centered below the baseline -->
-            <text x="${x + barWidth / 2}" y="${baselineY + 20}" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#666">${projectName}</text>
+            <!-- Project name label to the left of the axis -->
+            <text x="${baselineX - 10}" y="${y + barHeight / 2 + 4}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${projectName}</text>
         `
     })
 
