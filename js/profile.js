@@ -138,8 +138,8 @@ async function loadProfile() {
     const lineSvg = document.getElementById("line-chart");
     const chartWidth = 1000;
     const chartHeight = 550;
-    const marginLeft = 60;
-    const marginBottom = 40;
+    const marginLeft =90;
+    const marginBottom = 50;
     const marginTop = 20;
 
     const maxTotal = cumulativePoints[cumulativePoints.length - 1].total;
@@ -193,13 +193,13 @@ async function loadProfile() {
 
     // Add a dot at each transaction point
     cumulativePoints.forEach(p => {
-        lineContent += `<circle cx="${toX(p.date).toFixed(1)}" cy="${toY(p.total).toFixed(1)}" />`;
+        lineContent += `<circle cx="${toX(p.date).toFixed(1)}" cy="${toY(p.total).toFixed(1)}" r="9" />`;
     });
 
     // Start and end date labels
     lineContent += `
-    <text x="${marginLeft}" y="${chartHeight - marginBottom + 20}" text-anchor="start">${formatMonthYear(cumulativePoints[0].date)}</text>
-    <text x="${chartWidth - 20}" y="${chartHeight - marginBottom + 20}" text-anchor="end">${formatMonthYear(cumulativePoints[cumulativePoints.length - 1].date)}</text>
+    <text x="${marginLeft}" y="${chartHeight - marginBottom + 40}" text-anchor="start">${formatMonthYear(cumulativePoints[0].date)}</text>
+    <text x="${chartWidth - 20}" y="${chartHeight - marginBottom + 40}" text-anchor="end">${formatMonthYear(cumulativePoints[cumulativePoints.length - 1].date)}</text>
 `;
 
     lineSvg.innerHTML += lineContent;

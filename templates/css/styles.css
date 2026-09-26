@@ -40,13 +40,14 @@ body {
    ============================ */
 body:has(#login-form) {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
 header:not(#topbar) {
     font-family: var(--mono);
-    font-size: 1.4rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-align: center;
     margin-bottom: 1.5rem;
@@ -495,9 +496,9 @@ main {
 }
 
 #line-chart text {
-    fill: var(--muted) !important;
+    fill: var(--text) !important;
     font-family: var(--mono) !important;
-    font-size: 16px !important;
+    font-size: 22px !important;
     font-weight: 600;
 }
 
@@ -510,12 +511,12 @@ main {
     fill: none;
 }
 
-/* Data point dots — noticeably larger now */
+/* Data point dots — radius now set directly on each <circle> in profile.js (r="9"),
+   since the CSS 'r' property isn't reliably supported everywhere. Fill/stroke here still apply. */
 #line-chart circle {
     fill: var(--line-color) !important;
     stroke: var(--bg);
     stroke-width: 3 !important;
-    r: 9 !important;
 }
 
 /* ============================

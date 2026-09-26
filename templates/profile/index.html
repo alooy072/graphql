@@ -10,116 +10,76 @@
 
 <body>
     <header id="topbar">
-        <div class="brand">
-            <span class="brand-icon">&gt;_</span>
-            <div class="brand-text">
-                <span class="brand-title">graphql.profile</span>
-                <span class="brand-subtitle">learner_dashboard</span>
-            </div>
-        </div>
-        <div class="topbar-right">
-            <span class="api-status"><span class="dot"></span>CONNECTED</span>
-            <div id="logout-div">
-                <button type="button">logout ↗</button>
-            </div>
+        <span class="brand-title">My Profile</span>
+        <div id="logout-div">
+            <button type="button">Log out</button>
         </div>
     </header>
 
     <main>
         <section class="hero">
-            <span class="eyebrow">&gt; STATS.OVERVIEW</span>
-            <h1>Progress Tracker <span class="dot-accent">.</span></h1>
-            <p class="hero-sub">A snapshot of your Reboot01 progress, XP, and project activity.</p>
-            <div class="hero-badges">
-                <span class="badge">GRAPHQL</span>
-                <span class="badge">JWT</span>
-                <span class="badge">SVG</span>
-            </div>
+            <h1>Welcome back<span class="dot-accent">.</span></h1>
+            <p class="hero-sub">Here's how your Reboot01 progress is tracking.</p>
         </section>
 
         <div class="cards-row">
             <div class="panel" id="user-info">
-                <div class="panel-header">
-                    <span class="panel-label"><span class="panel-index">01</span> PROFILE_INFO</span>
-                    <span class="panel-icon">{ }</span>
-                </div>
+                <h3 class="panel-title">Your Details</h3>
                 <div class="panel-body">
                     <div class="info-row">
-                        <span class="info-label">username</span>
+                        <span class="info-label">Username</span>
                         <span class="info-value" id="username"></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">user_id</span>
+                        <span class="info-label">User ID</span>
                         <span class="info-value" id="user-id"></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">email</span>
+                        <span class="info-label">Email</span>
                         <span class="info-value" id="email"></span>
                     </div>
                 </div>
-                <div class="panel-footer">source: user table</div>
             </div>
 
             <div class="panel" id="total-xp-card">
-                <div class="panel-header">
-                    <span class="panel-label"><span class="panel-index">02</span> XP_EARNED</span>
-                    <span class="panel-icon">++</span>
-                </div>
+                <h3 class="panel-title">Total XP</h3>
                 <div class="panel-body">
-                    <span class="stat-caption">total accumulated</span>
                     <span class="stat-big stat-accent" id="total-xp"></span>
-                    <p class="stat-desc">All experience points logged across every completed module.</p>
+                    <p class="stat-desc">Experience points earned across all completed work.</p>
                 </div>
-                <div class="panel-footer">source: transaction table</div>
             </div>
 
             <div class="panel" id="audit-ratio-card">
-                <div class="panel-header">
-                    <span class="panel-label"><span class="panel-index">03</span> AUDIT_RATIO</span>
-                    <span class="panel-icon">%</span>
-                </div>
+                <h3 class="panel-title">Audit Ratio</h3>
                 <div class="panel-body">
-                    <span class="stat-caption">done vs. received</span>
                     <span class="stat-big stat-accent2" id="audit-ratio"></span>
                     <div class="mini-stats">
                         <div class="mini-stat">
-                            <span class="mini-label">↑ AUDITS DONE</span>
+                            <span class="mini-label">Audits done</span>
                             <span class="mini-value" id="audit-done"></span>
                         </div>
                         <div class="mini-stat">
-                            <span class="mini-label">↓ AUDITS RECEIVED</span>
+                            <span class="mini-label">Audits received</span>
                             <span class="mini-value" id="audit-received"></span>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">source: user.auditRatio</div>
             </div>
         </div>
 
         <section class="section-heading">
-            <span class="eyebrow">&gt; METRICS</span>
-            <div class="section-heading-row">
-                <h2>Performance Charts</h2>
-                <span class="section-note">rendered directly from GraphQL data as SVG</span>
-            </div>
+            <h2>Your Charts</h2>
         </section>
 
         <div class="charts-row">
             <div class="panel chart-panel" id="line-chart-container">
-                <div class="chart-top">
-                    <span class="panel-label">GRAPH_01</span>
-                    <span class="badge">LINE / TIME</span>
-                </div>
                 <h3 class="chart-title">XP Growth</h3>
                 <p class="chart-subtitle">Total XP accumulated over the course of the program.</p>
-                <svg id="line-chart" width="1050" height="550" viewBox="0 0 1050 550" preserveAspectRatio="xMidYMid meet"></svg>
+                <svg id="line-chart" width="1050" height="550" viewBox="0 0 1050 550"
+                    preserveAspectRatio="xMidYMid meet"></svg>
             </div>
 
             <div class="panel chart-panel" id="chart-container">
-                <div class="chart-top">
-                    <span class="panel-label">GRAPH_02</span>
-                    <span class="badge">BAR / PROJECT</span>
-                </div>
                 <h3 class="chart-title">XP by Project</h3>
                 <p class="chart-subtitle">Where your experience points came from, ranked highest first.</p>
                 <svg id="bar-chart" width="600" viewBox="0 0 600 400">
@@ -131,5 +91,6 @@
 
     <script type="module" src="../../js/profile.js"></script>
 </body>
+
 
 </html>
