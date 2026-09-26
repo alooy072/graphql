@@ -17,5 +17,5 @@ let form = document.getElementById("login-form");
     }
     sessionStorage.setItem("jwt", jwt);
 
-    window.location.href = "../templates/profile.html"
+    window.location.href = "./templates/profile.html"
 })
