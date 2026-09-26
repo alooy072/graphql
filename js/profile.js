@@ -208,5 +208,5 @@ async function loadProfile() {
 
 
 function redirectToLogin() {
-    window.location.href = "../templates/index.html";
+    window.location.href = "/login/index.html";
 }

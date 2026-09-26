@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="templates/css/styles.css">
+        <title>GraphQL Login</title>
+    </head>
+
+    <body>
+        <header>Login</header>
+        <form id="login-form">
+            <input type="text" placeholder="username/email" name="identifier"><br>
+            <input type="password" placeholder="password" name="password" >
+            <br>
+            <button type="submit">Login</button>
+        </form>
+
+        <div id="error-div" style="display: none;"> Invalid Identifier/Password!</div>
+
+        <script type="module" src="/js/login.js"></script>
+    </body>
+</html>

@@ -17,6 +17,6 @@ form.addEventListener('submit', async (e) => {
     }
     sessionStorage.setItem("jwt", jwt);
 
-    window.location.href = "templates/profile.html";
+    window.location.href = "../templates/profile/index.html";
 
 })
