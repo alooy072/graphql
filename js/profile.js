@@ -69,12 +69,14 @@ async function loadProfile() {
     console.log(auditRatio, auditDone, auditRecieved)
 
     let auditRatioEl = document.getElementById("audit-ratio");
+    document.getElementById("audit-done").textContent = auditDone.toFixed(2) + " MB";
+    document.getElementById("audit-received").textContent = auditRecieved.toFixed(2) + " MB";
     auditRatioEl.textContent = auditRatio.toFixed(2)
 
     let xpGraphData = await xpPerProject();
     let xpGraphArray = xpGraphData.data.transaction;
     xpGraphArray.forEach(obj => {
-        obj.amount = obj.amount/1000
+        obj.amount = obj.amount / 1000
     })
     console.log(xpGraphArray);
 
@@ -92,6 +94,7 @@ async function loadProfile() {
     // Set svg height to fit all bars, stacked vertically
     const totalHeight = startY + xpGraphArray.length * (barHeight + barSpacing) + 20;
     svg.setAttribute("height", totalHeight)
+    svg.setAttribute("viewBox", `0 0 600 ${totalHeight}`)
 
     let svgContent = `<line x1="${baselineX}" y1="10" x2="${baselineX}" y2="${totalHeight - 10}" stroke="#333" stroke-width="2" />`;
 
@@ -109,10 +112,10 @@ async function loadProfile() {
             <rect x="${baselineX}" y="${y}" width="${pixelWidth}" height="${barHeight}" />
 
             <!-- Value Text Label at the end of the bar -->
-            <text x="${baselineX + pixelWidth + 8}" y="${y + barHeight / 2}" font-size="12" font-family="sans-serif" fill="#666">${obj.amount}</text>
+            <text x="${baselineX + pixelWidth + 8}" y="${y + barHeight / 2 + 4}" text-anchor="start">${Math.round(obj.amount)} kB</text>
 
             <!-- Project name label to the left of the axis -->
-            <text x="${baselineX - 10}" y="${y + barHeight / 2 + 4}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${projectName}</text>
+            <text x="${baselineX - 10}" y="${y + barHeight / 2 + 4}" text-anchor="end">${projectName}</text>
         `
     })
 
@@ -121,7 +124,7 @@ async function loadProfile() {
     let xpOverTimeData = await xpOverTime();
     let xpOverTimeArray = xpOverTimeData.data.transaction
     xpOverTimeArray.forEach(obj => {
-        obj.amount = obj.amount/1000
+        obj.amount = obj.amount / 1000
     })
     console.log(xpOverTimeArray)
 
@@ -134,7 +137,7 @@ async function loadProfile() {
 
     const lineSvg = document.getElementById("line-chart");
     const chartWidth = 1000;
-    const chartHeight = 400;
+    const chartHeight = 550;
     const marginLeft = 60;
     const marginBottom = 40;
     const marginTop = 20;
@@ -152,6 +155,16 @@ async function loadProfile() {
         return (chartHeight - marginBottom) - (total / maxTotal) * (chartHeight - marginBottom - marginTop);
     }
 
+    // Formats a cumulative kB value as "153 kB" for axis labels
+    function formatKB(value) {
+        return `${Math.round(value)} kB`;
+    }
+
+    // Formats a date as "Sept 2025" for the x-axis
+    function formatMonthYear(date) {
+        return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    }
+
     // Build the path data
     let pathD = cumulativePoints
         .map((p, i) => `${i === 0 ? "M" : "L"} ${toX(p.date).toFixed(1)},${toY(p.total).toFixed(1)}`)
@@ -159,26 +172,34 @@ async function loadProfile() {
 
     let lineContent = `
     <!-- Axes -->
-    <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft}" y2="${chartHeight - marginBottom}" stroke="#333" stroke-width="2" />
-    <line x1="${marginLeft}" y1="${chartHeight - marginBottom}" x2="${chartWidth - 20}" y2="${chartHeight - marginBottom}" stroke="#333" stroke-width="2" />
-
-    <!-- Y axis max label -->
-    <text x="${marginLeft - 10}" y="${marginTop + 4}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${maxTotal}</text>
-    <text x="${marginLeft - 10}" y="${chartHeight - marginBottom}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">0</text>
-
-    <!-- The cumulative XP line -->
-    <path d="${pathD}" fill="none" stroke="#2b6cb0" stroke-width="2" />
+    <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft}" y2="${chartHeight - marginBottom}" />
+    <line x1="${marginLeft}" y1="${chartHeight - marginBottom}" x2="${chartWidth - 20}" y2="${chartHeight - marginBottom}" />
 `;
+
+    // Horizontal gridlines + Y axis labels, evenly spaced (0 to max, 4 steps)
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+        const value = (maxTotal / steps) * i;
+        const y = toY(value);
+
+        lineContent += `
+        <line x1="${marginLeft}" y1="${y.toFixed(1)}" x2="${chartWidth - 20}" y2="${y.toFixed(1)}" />
+        <text x="${marginLeft - 12}" y="${(y + 4).toFixed(1)}" text-anchor="end">${formatKB(value)}</text>
+    `;
+    }
+
+    // The cumulative XP line
+    lineContent += `<path d="${pathD}" />`;
 
     // Add a dot at each transaction point
     cumulativePoints.forEach(p => {
-        lineContent += `<circle cx="${toX(p.date).toFixed(1)}" cy="${toY(p.total).toFixed(1)}" r="3" fill="#2b6cb0" />`;
+        lineContent += `<circle cx="${toX(p.date).toFixed(1)}" cy="${toY(p.total).toFixed(1)}" />`;
     });
 
     // Start and end date labels
     lineContent += `
-    <text x="${marginLeft}" y="${chartHeight - marginBottom + 20}" font-size="12" font-family="sans-serif" fill="#666">${cumulativePoints[0].date.toLocaleDateString()}</text>
-    <text x="${chartWidth - 20}" y="${chartHeight - marginBottom + 20}" text-anchor="end" font-size="12" font-family="sans-serif" fill="#666">${cumulativePoints[cumulativePoints.length - 1].date.toLocaleDateString()}</text>
+    <text x="${marginLeft}" y="${chartHeight - marginBottom + 20}" text-anchor="start">${formatMonthYear(cumulativePoints[0].date)}</text>
+    <text x="${chartWidth - 20}" y="${chartHeight - marginBottom + 20}" text-anchor="end">${formatMonthYear(cumulativePoints[cumulativePoints.length - 1].date)}</text>
 `;
 
     lineSvg.innerHTML += lineContent;
