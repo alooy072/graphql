@@ -83,6 +83,7 @@ async function loadProfile() {
     xpGraphArray.sort((a, b) => b.amount - a.amount) // Sorts the array by least xp to most
 
     const svg = document.getElementById("bar-chart");
+    svg.innerHTML = ""; // clears any previous render before appending new bars
     const baselineX = 140;
     const maxBarWidth = 400
     const barHeight = 20;
@@ -136,6 +137,7 @@ async function loadProfile() {
     console.log(cumulativePoints)
 
     const lineSvg = document.getElementById("line-chart");
+    lineSvg.innerHTML = ""; // clears any previous render before appending new bars
     const chartWidth = 1000;
     const chartHeight = 550;
     const marginLeft =90;
