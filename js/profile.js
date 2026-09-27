@@ -16,6 +16,8 @@ async function loadProfile() {
         return
     }
 
+    console.log(JSON.parse(atob(jwt.split(".")[1])));
+
     const logoutDiv = document.getElementById("logout-div");
     const logoutButton = logoutDiv.querySelector("button")
     logoutButton.addEventListener("click", (e) => {
@@ -23,8 +25,18 @@ async function loadProfile() {
         redirectToLogin()
     })
 
-    let userInfoQuery = `{user{id login email}}`
-    let userInfo = await GraphqlQuery(userInfoQuery)
+    const userId = getUserIdFromJwt(jwt);
+
+
+    let userInfoQuery = `query GetUser($userId: Int!){
+        user(where: { id: {_eq: $userId}}){
+            id
+            login
+            email
+            }
+        }`
+
+    let userInfo = await GraphqlQuery(userInfoQuery, {userId});
     console.log(userInfo)
 
     let userObj = userInfo.data.user[0]
@@ -161,11 +173,13 @@ async function loadProfile() {
     const minDate = cumulativePoints[0].date.getTime()
     const maxDate = cumulativePoints[cumulativePoints.length - 1].date.getTime();
 
-    // Maps a point to pixel coordinates
+    // Finds the x value (the date) of when the xp was accumulated
     function toX(date) {
-        return marginLeft + ((date.getTime() - minDate) / (maxDate - minDate)) * (chartWidth - marginLeft - 20);
+        // (chartWidth - marginLeft - 20) turns the percentage to pixels
+        return marginLeft + ((date.getTime() - minDate) / (maxDate - minDate)) * (chartWidth - marginLeft - 20);  
     }
 
+    // Finds the y value (the total) xp of that specific date
     function toY(total) {
         return (chartHeight - marginBottom) - (total / maxTotal) * (chartHeight - marginBottom - marginTop);
     }
@@ -183,7 +197,7 @@ async function loadProfile() {
     // Build the path data
     let pathD = cumulativePoints
         .map((p, i) => `${i === 0 ? "M" : "L"} ${toX(p.date).toFixed(1)},${toY(p.total).toFixed(1)}`)
-        .join(" ");
+        .join(" ");  // M is move to and L is line to
 
     let lineContent = `
     <!-- Axes -->
@@ -218,6 +232,12 @@ async function loadProfile() {
 `;
 
     lineSvg.innerHTML += lineContent;
+}
+
+
+function getUserIdFromJwt(jwt) {
+    const payload = JSON.parse(atob(jwt.split(".")[1]));
+    return payload.sub; // holds the user id
 }
 
 
