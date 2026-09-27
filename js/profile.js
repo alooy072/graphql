@@ -74,13 +74,26 @@ async function loadProfile() {
     auditRatioEl.textContent = auditRatio.toFixed(2)
 
     let xpGraphData = await xpPerProject();
-    let xpGraphArray = xpGraphData.data.transaction;
+    let rawTransactions = xpGraphData.data.transaction;
+
+    // Aggregate XP by project path — the same project can appear as multiple
+    // separate transactions (retries, bonuses, sub-exercises), so sum them
+    // into one entry per unique path instead of drawing a bar per transaction.
+    const xpByProject = {};
+    rawTransactions.forEach(tx => {
+        if (!xpByProject[tx.path]) {
+            xpByProject[tx.path] = { path: tx.path, amount: 0 };
+        }
+        xpByProject[tx.path].amount += tx.amount;
+    });
+
+    let xpGraphArray = Object.values(xpByProject);
     xpGraphArray.forEach(obj => {
         obj.amount = obj.amount / 1000
     })
     console.log(xpGraphArray);
 
-    xpGraphArray.sort((a, b) => b.amount - a.amount) // Sorts the array by least xp to most
+    xpGraphArray.sort((a, b) => b.amount - a.amount) // Sorts the array by highest xp to lowest
 
     const svg = document.getElementById("bar-chart");
     svg.innerHTML = ""; // clears any previous render before appending new bars
@@ -140,7 +153,7 @@ async function loadProfile() {
     lineSvg.innerHTML = ""; // clears any previous render before appending new bars
     const chartWidth = 1000;
     const chartHeight = 550;
-    const marginLeft =90;
+    const marginLeft = 90;
     const marginBottom = 50;
     const marginTop = 20;
 
